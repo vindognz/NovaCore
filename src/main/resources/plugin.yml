@@ -4,3 +4,7 @@ main: me.sharp.novaCore.NovaCore
 api-version: '1.21'
 authors: [vindognz]
 description: Core plugin for NovaSMP
+commands:
+  /test:
+    description: test command
+    usage: /test
