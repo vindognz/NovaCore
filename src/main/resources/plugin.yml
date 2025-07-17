@@ -8,3 +8,6 @@ commands:
   test:
     description: test command
     usage: /test
+  GiveNova:
+    description: gives you a nova
+    usage: /GiveNova <nova>
