@@ -10,7 +10,7 @@ public final class NovaCore extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         Bukkit.getLogger().info("NovaCore enabled!");
-        getCommand("test").setExecutor(new TestCommand());
+        this.getCommand("test").setExecutor(new TestCommand());
     }
 
     @Override

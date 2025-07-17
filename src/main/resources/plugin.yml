@@ -5,6 +5,6 @@ api-version: '1.21'
 authors: [vindognz]
 description: Core plugin for NovaSMP
 commands:
-  /test:
+  test:
     description: test command
     usage: /test
