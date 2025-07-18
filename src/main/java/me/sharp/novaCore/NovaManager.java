@@ -13,10 +13,6 @@ public class NovaManager {
         novas.put(nova.name.toLowerCase(), nova);
     }
 
-    public Nova getNova(String name) {
-        return novas.get(name.toLowerCase());
-    }
-
     public Collection<Nova> getAllNovas() {
         return novas.values();
     }

@@ -5,13 +5,14 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 public class StrengthNova extends Nova {
 
     private final JavaPlugin plugin;
 
     public StrengthNova(JavaPlugin plugin) {
-        super(plugin, "Strength", 180);
+        super(plugin, "Strength", 5000);
         this.plugin = plugin;
     }
 
@@ -39,6 +40,16 @@ public class StrengthNova extends Nova {
     @Override
     public void activate(Player player) {
         player.sendMessage("used strength nova");
-        ParticleCircle(player,Particle.WHITE_SMOKE,2.5,16, 3);
+        player.setVelocity(new Vector(0, 1.5, 0));
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (player.isOnGround()) {
+                    ParticleCircle(player,Particle.WHITE_SMOKE,3.5,16, 4);
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 5L, 2L);
     }
 }

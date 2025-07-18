@@ -8,6 +8,9 @@ commands:
   test:
     description: test command
     usage: /test
-  GiveNova:
+  givenova:
     description: gives you a nova
-    usage: /GiveNova <nova>
+    usage: /givenova <nova>
+  listnovas:
+    description: lists all the novas
+    usage: /listnovas
