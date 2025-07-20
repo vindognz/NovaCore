@@ -2,10 +2,14 @@ package me.sharp.novaCore.novas;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public class StrengthNova extends Nova {
 
@@ -16,7 +20,7 @@ public class StrengthNova extends Nova {
         this.plugin = plugin;
     }
 
-    public void ParticleCircle(Player player, Particle type, double rad, int particle_count, int rings) {
+    public void ParticleCircle(Player player, Particle type, double rad, int particle_count, int rings, BlockData extra) {
         Location base = player.getLocation();
         double between_rings = rad / rings;
 
@@ -29,8 +33,8 @@ public class StrengthNova extends Nova {
                 public void run() {
                     for (int particle_index = 0; particle_index <= particle_count; particle_index++) {
                         double angle = (2 * Math.PI / particle_count) * particle_index;
-                        Location location = base.clone().add(ring_radius * Math.cos(angle), 0, ring_radius * Math.sin(angle));
-                        player.getWorld().spawnParticle(type, location, 1, 0, 0, 0, 0);
+                        Location location = base.clone().add(ring_radius * Math.cos(angle) + Math.random() * 0.5, 0.5 * ring_radius, ring_radius * Math.sin(angle) + Math.random() * 0.5);
+                        player.getWorld().spawnParticle(type, location, 1, 0, 0, 0, extra);
                     }
                 }
             }.runTaskLater(plugin, delay_ticks);
@@ -46,7 +50,20 @@ public class StrengthNova extends Nova {
             @Override
             public void run() {
                 if (player.isOnGround()) {
-                    ParticleCircle(player,Particle.WHITE_SMOKE,3.5,16, 4);
+
+                    List<Player> nearbyPlayers = player.getWorld().getPlayers().stream()
+                            .filter(p -> !p.equals(player))
+                            .filter(p -> p.getLocation().distance(player.getLocation()) <= 3.5)
+                            .toList();
+
+                    Block stood = player.getLocation().add(0, -1, 0).getBlock();
+                    ParticleCircle(player,Particle.BLOCK,3.5,32, 4, stood.getType().createBlockData());
+
+                    for (Player target : nearbyPlayers) {
+                        Location distance = player.getLocation().subtract(target.getLocation());
+                        target.setVelocity(new Vector(-1 / (distance.getX() * 10+0.0001), 0.8, -1 / (distance.getZ() * 10+0.0001)));
+                    }
+
                     this.cancel();
                 }
             }
