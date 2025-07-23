@@ -1,0 +1,43 @@
+novas:
+  strength:
+    # Radius = radius of blast effect in blocks
+    # Particles = number of particles that form the rings
+    # Rings = how many rings
+    # Launch Velocity = how you should get launched when you use the nova
+    radius: 3.5
+    particles: 32
+    rings: 4
+    launch_velocity:
+      - 0
+      - 1.5
+      - 0
+
+  speed:
+    # Speed multiplier = how fast you should move when you use this nova
+    # Vertical clamp = the maximum vertical velocity you can achieve while using this nova
+    speed_multiplier: 2.5
+    vertical_clamp: 1.4
+
+  haste:
+    # Chance = the chance for the effect to happen (%)
+    chance: 20
+
+  fire:
+    # Chance = the chance for the effect to happen (%)
+    chance: 50
+
+  ghost:
+    # Duration = the amount of time the invisibility will last (in seconds)
+    duration: 180
+
+  blizzard:
+    # Chance = the chance for the effect to happen (%)
+    chance: 25
+
+  thunder:
+    # Chance = the chance for the effect to happen (%)
+    chance: 10
+
+  solflare:
+    # Hits = the amount of hits the boomerang can deal
+    hits: 2

@@ -34,7 +34,7 @@ public class ListNovasCommand implements CommandExecutor {
 
         String nova_list = novas.stream()
                 .map(nova -> ChatColor.AQUA + nova.name)
-                .collect(java.util.stream.Collectors.joining(ChatColor.GRAY + ", "));
+                .collect(java.util.stream.Collectors.joining(ChatColor.DARK_GRAY + ", "));
 
         player.sendMessage("Available Novas: " + nova_list);
 

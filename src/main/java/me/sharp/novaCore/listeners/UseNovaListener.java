@@ -58,7 +58,7 @@ public class UseNovaListener implements Listener {
         Player player = e.getPlayer();
 
         if (optionalNova.isEmpty()) {
-            player.sendMessage(ChatColor.RED + "This Nova no longer exists");
+            player.sendMessage(ChatColor.RED + "This Nova no longer exists. Please contact an admin.");
             return;
         }
 

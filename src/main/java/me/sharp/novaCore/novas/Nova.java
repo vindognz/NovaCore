@@ -30,7 +30,7 @@ public abstract class Nova {
             lastUse.put(player.getUniqueId(), System.currentTimeMillis());
             activate(player);
         } else {
-            long timeLeft = (cooldown - (System.currentTimeMillis() - lastUse.get(player.getUniqueId()))) / 1000;
+            long timeLeft = 1 + (cooldown - (System.currentTimeMillis() - lastUse.get(player.getUniqueId()))) / 1000;
             player.sendMessage(ChatColor.RED + "Your Nova is on cooldown for " + timeLeft + " more seconds.");
         }
     }

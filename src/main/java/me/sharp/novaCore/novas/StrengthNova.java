@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,10 +16,12 @@ import java.util.List;
 public class StrengthNova extends Nova {
 
     private final JavaPlugin plugin;
+    private final FileConfiguration config;
 
-    public StrengthNova(JavaPlugin plugin) {
-        super(plugin, "Strength", 5000);
+    public StrengthNova(JavaPlugin plugin, FileConfiguration config) {
+        super(plugin, "Strength", 5000); // make this 3m
         this.plugin = plugin;
+        this.config = config;
     }
 
     public void ParticleCircle(Player player, Particle type, double rad, int particle_count, int rings, BlockData extra) {
@@ -41,32 +45,73 @@ public class StrengthNova extends Nova {
         }
     }
 
+    public Vector oldVelo;
+
     @Override
     public void activate(Player player) {
         player.sendMessage("used strength nova");
-        player.setVelocity(new Vector(0, 1.5, 0));
+        List<Double> velocity = config.getDoubleList("novas.strength.launch_velocity");
+        player.setVelocity(new Vector(velocity.get(0), velocity.get(1), velocity.get(2)));
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (player.isOnGround()) {
 
-                    List<Player> nearbyPlayers = player.getWorld().getPlayers().stream()
+                    Vector playerVelo = player.getVelocity();
+
+                    double radius = config.getDouble("novas.strength.radius");
+                    int particles = config.getInt("novas.strength.particles");
+                    int rings = config.getInt("novas.strength.rings");
+
+//                    List<Player> nearbyPlayers = player.getWorld().getPlayers().stream()
+//                            .filter(p -> !p.equals(player))
+//                            .filter(p -> p.getLocation().distance(player.getLocation()) <= radius)
+//                            .toList();
+
+                    List<Entity> nearbyEntities = player.getWorld().getEntities().stream()
                             .filter(p -> !p.equals(player))
-                            .filter(p -> p.getLocation().distance(player.getLocation()) <= 3.5)
+                            .filter(p -> p.getLocation().distance(player.getLocation()) <= radius)
                             .toList();
 
                     Block stood = player.getLocation().add(0, -1, 0).getBlock();
-                    ParticleCircle(player,Particle.BLOCK,3.5,32, 4, stood.getType().createBlockData());
 
-                    for (Player target : nearbyPlayers) {
-                        Location distance = player.getLocation().subtract(target.getLocation());
-                        target.setVelocity(new Vector(-1 / (distance.getX() * 10+0.0001), 0.8, -1 / (distance.getZ() * 10+0.0001)));
+                    ParticleCircle(player,Particle.BLOCK,radius,particles, rings, stood.getType().createBlockData());
+
+//                    for (Player target : nearbyPlayers) {
+                    for (Entity target : nearbyEntities) {
+//                        double maxDamage = 12; // pull from config file
+//                        double minDamage = 5;
+//                        double shapeFactor = (maxDamage - minDamage) / (Math.pow(radius, 2));
+//                        double dist = Math.abs(target.getLocation().distance(player.getLocation()));
+//                        double damage = shapeFactor * Math.pow((dist - radius), 2) + minDamage;
+//
+//                        target.damage(damage);
+
+                        Vector direction = target.getLocation().toVector().subtract(player.getLocation().toVector());
+
+                        double yaw = Math.atan2(-direction.getX(), direction.getZ());
+                        yaw = (yaw + (2 * Math.PI)) % (2 * Math.PI);
+
+                        double dist = target.getLocation().distance(player.getLocation());
+
+                        double speedMultiplier = 2;
+
+                        double x = (-Math.sin(yaw) * 1/dist) * speedMultiplier;
+                        x = Math.min(x, 2);
+                        double z = (Math.cos(yaw) * 1/dist) * speedMultiplier;
+                        z = Math.min(z, 2);
+
+                        Vector speed = new Vector(x, 0.8, z);
+
+                        target.setVelocity(speed);
                     }
 
                     this.cancel();
+                } else {
+                    oldVelo = player.getVelocity();
                 }
             }
-        }.runTaskTimer(plugin, 5L, 2L);
+        }.runTaskTimer(plugin, 4L, 2L);
     }
 }
