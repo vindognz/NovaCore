@@ -64,12 +64,7 @@ public class StrengthNova extends Nova {
                     int particles = config.getInt("novas.strength.particles");
                     int rings = config.getInt("novas.strength.rings");
 
-//                    List<Player> nearbyPlayers = player.getWorld().getPlayers().stream()
-//                            .filter(p -> !p.equals(player))
-//                            .filter(p -> p.getLocation().distance(player.getLocation()) <= radius)
-//                            .toList();
-
-                    List<Entity> nearbyEntities = player.getWorld().getEntities().stream()
+                    List<Player> nearbyPlayers = player.getWorld().getPlayers().stream()
                             .filter(p -> !p.equals(player))
                             .filter(p -> p.getLocation().distance(player.getLocation()) <= radius)
                             .toList();
@@ -78,15 +73,14 @@ public class StrengthNova extends Nova {
 
                     ParticleCircle(player,Particle.BLOCK,radius,particles, rings, stood.getType().createBlockData());
 
-//                    for (Player target : nearbyPlayers) {
-                    for (Entity target : nearbyEntities) {
-//                        double maxDamage = 12; // pull from config file
-//                        double minDamage = 5;
-//                        double shapeFactor = (maxDamage - minDamage) / (Math.pow(radius, 2));
-//                        double dist = Math.abs(target.getLocation().distance(player.getLocation()));
-//                        double damage = shapeFactor * Math.pow((dist - radius), 2) + minDamage;
-//
-//                        target.damage(damage);
+                    for (Player target : nearbyPlayers) {
+                        double maxDamage = 12; // pull from config file
+                        double minDamage = 5;
+                        double shapeFactor = (maxDamage - minDamage) / (Math.pow(radius, 2));
+                        double damageDist = Math.abs(target.getLocation().distance(player.getLocation()));
+                        double damage = shapeFactor * Math.pow((damageDist - radius), 2) + minDamage;
+
+                        target.damage(damage);
 
                         Vector direction = target.getLocation().toVector().subtract(player.getLocation().toVector());
 
@@ -95,14 +89,14 @@ public class StrengthNova extends Nova {
 
                         double dist = target.getLocation().distance(player.getLocation());
 
-                        double speedMultiplier = 2;
+                        double speedMultiplier = 2.5;
 
                         double x = (-Math.sin(yaw) * 1/dist) * speedMultiplier;
-                        x = Math.min(x, 2);
+                        x = Math.max(x, 3.5);
                         double z = (Math.cos(yaw) * 1/dist) * speedMultiplier;
-                        z = Math.min(z, 2);
+                        z = Math.max(z, 3.5);
 
-                        Vector speed = new Vector(x, 0.8, z);
+                        Vector speed = new Vector(x, Math.max((Math.abs(oldVelo.getY()) / 2), 1), z);
 
                         target.setVelocity(speed);
                     }
